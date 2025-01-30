@@ -1,46 +1,98 @@
-CREATE DATABASE AndmebaasTailov;
+	CREATE DATABASE AndmebaasTailov;
 
 
-USE AndmebaasTailov;
-CREATE TABLE film(
-filmID int PRIMARY KEY identity(1,1),
-filmNimetus varchar(30) not null,
-aasta int,
-eelarveHind decimal(7,1)
-);
-SELECT * from film;
+	USE AndmebaasTailov;
+	CREATE TABLE film(
+	filmID int PRIMARY KEY identity(1,1),
+	filmNimetus varchar(30) not null,
+	aasta int,
+	eelarveHind decimal(7,1)
+	);
+	SELECT * from film;
 
---kustuta tabel
-DROP TABLE film;
+	--kustuta tabel
+	DROP TABLE film;
 
---andmete sisestamine tabelisse
-INSERT INTO film(filmNimetus, aasta, eelarveHind)
-VALUES('Titanic', 1998, 20000.5),
-('Barby', 2023, 10000.5),
-('Babygirl', 2024, 555555.5),
-('Riply', 2024, 22000.5);
+	--andmete sisestamine tabelisse
+	INSERT INTO film(filmNimetus, aasta, eelarveHind)
+	VALUES('Titanic', 1998, 20000.5),
+	('Barby', 2023, 10000.5),
+	('Babygirl', 2024, 555555.5),
+	('Riply', 2024, 22000.5);
 
---eemaldamine id abiks
---DELETE FROM film WHERE filmID=???
+	--eemaldamine id abiks
+	--DELETE FROM film WHERE filmID=???
 
-CREATE TABLE zanr(
-zanrID int PRIMARY KEY identity(1,1),
-zanrNimetus varchar(20) UNIQUE
-)
+	CREATE TABLE zanr(
+	zanrID int PRIMARY KEY identity(1,1),
+	zanrNimetus varchar(20) UNIQUE
+	)
 
-INSERT INTO zanr(zanrNimetus)
-VALUES ('draama'), ('detektiiv');
-SELECT * FROM zanr;
+	INSERT INTO zanr(zanrNimetus)
+	VALUES ('draama'), ('detektiiv');
+	SELECT * FROM zanr;
 
---tabeli 'film' struktuuri muutmine -> uue veergu lisamine
-ALTER TABLE film ADD zanrID int;
-SELECT * FROM film;
+	--tabeli 'film' struktuuri muutmine -> uue veergu lisamine
+	ALTER TABLE film ADD zanrID int;
+	SELECT * FROM film;
 
---tabeli 'film' struktuuri muutmine
---> FK lisamine mis on seotud tabeliga zanr(zanrID)
-ALTER TABLE film ADD CONSTRAINT fk_zanr
-FOREIGN KEY (zanrID) REFERENCES zanr(zanrID);
+	--tabeli 'film' struktuuri muutmine
+	--> FK lisamine mis on seotud tabeliga zanr(zanrID)
+	ALTER TABLE film ADD CONSTRAINT fk_zanr
+	FOREIGN KEY (zanrID) REFERENCES zanr(zanrID);
 
-SELECT * from film;
-SELECT * from zanr;
-UPDATE film SET zanrID=2 WHERE filmID=3
+	SELECT * from film;
+	SELECT * from zanr;
+	UPDATE film SET zanrID=2 WHERE filmID=3
+
+
+
+
+
+
+	CREATE TABLE rezisoor(
+	rezID int PRIMARY KEY identity(1,1),
+	nimi varchar(30) not null,
+	synniaeg int,
+	riik varchar(25)
+	);
+
+	ALTER TABLE film ADD rezID int;
+	ALTER TABLE film ADD CONSTRAINT fk_rezisoor
+	FOREIGN KEY (rezID) REFERENCES rezisoor(rezID);
+
+	CREATE TABLE kinokava(
+	kavaID int PRIMARY KEY identity(1,1),
+	paev datetime not null,
+	asukoht varchar(50) not null,
+	hinnang decimal(2,1)
+	);
+
+	ALTER TABLE kinokava ADD filmID int;
+	ALTER TABLE kinokava ADD CONSTRAINT fk_kinokava
+	FOREIGN KEY (filmID) REFERENCES film(filmID)
+
+	select * from kinokava
+	select * from film
+
+
+
+	INSERT INTO kinokava(paev, asukoht, hinnang, filmID)
+	VALUES ('2025-01-30 20:00', 'Mustamae', 4.3, 1)
+
+	INSERT INTO kinokava(paev, asukoht, hinnang, filmID)
+	VALUES ('2025-01-29 18:00', 'Lasnamae', 3.5, 2)
+
+	INSERT INTO kinokava(paev, asukoht, hinnang, filmID)
+	VALUES ('2025-01-31 15:00', 'Oismae', 2.4, 3)
+	SELECT * FROM kinokava;
+
+
+	select * from rezisoor
+	SELECT * from kinokava
+	UPDATE film SET rezID=1 WHERE filmID=4
+
+	INSERT INTO rezisoor(nimi, synniaeg, riik)
+	VALUES ('Spilberg', 1946, 'USA'),
+	('Tarantino', 1963, 'USA'),
+	('Hichcock', 1899, 'UK')
