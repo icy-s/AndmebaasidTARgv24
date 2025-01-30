@@ -3,3 +3,14 @@ Andmetüüp:
 2. Arv (INT, SMALLINT, Decimal(5, 2) kus 5 - kõik arvud ja 2 - peale koma
 3. Loogika (bit, bool, boolean, true/false)
 4. Kuupäev (date/time, date, time)
+---------------------------------------------
+Piirangud (ограничения)
+* PRIMARY KEY - атрибут, который уникально определяет строку
+* FOREIGN KEY - связь с PK другой таблицы
+* NOT NULL - значение не может быть нулём
+* UNIQUE - уникальное значение
+* CHECK - мужчины/женщины
+---------------------------------------------
+SQL - Structure Query Language
+* DDL - Data Definition Language - CREATE TABLE, ALTER TABLE, DROP TABLE
+* DML - Data Manipulation Language - INSERT INTO, UPDATE
