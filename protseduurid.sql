@@ -99,3 +99,18 @@ exec otsingUudiseTeema 'w'
 
 
 --XAMPP/localhost
+
+CREATE TABLE uudised(
+uudisID int PRIMARY KEY AUTO_INCREMENT,
+uudiseTeema varchar(50),
+kuupaev date,
+autor varchar(25),
+kirjeldus text
+);
+
+insert into uudised(
+uudiseTeema, kuupaev, autor, kirjeldus)
+values(
+'udune ilm', '2025-02-06', 'postimees', 'Lõunani on udune ilm')
+
+call lisaUudis ('windows 11', '2025-02-06', 'õpetaja Pant', 'w11 ei tööta multimeedia klassis'); 
