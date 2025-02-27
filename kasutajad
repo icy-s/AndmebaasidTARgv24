@@ -1,0 +1,16 @@
+-- Kasutaja loomine
+
+create database kasutajaTAR;
+use kasutajaTAR;
+-- Security --> Login --> New Login
+
+create table test(
+id int primary key,
+nimetus varchar(10))
+
+-- õiguste määramine
+-- grant "sqltegevus" on "tabelinimi" to "kasutajanimi"
+grant insert on test to opilaneEvgeny;
+
+-- õiguste keelamine
+deny delete on test to opilaneEvgeny;
