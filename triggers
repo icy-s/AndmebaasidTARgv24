@@ -1,0 +1,112 @@
+Create database trigerTARgv24;
+
+Use trigerTARgv24;
+
+Create table linnad(
+linnID int PRIMARY KEY identity(1,1),
+linnanimi varchar(15) not null,
+rahvaarv int);
+
+Create table logi(
+id int PRIMARY KEY identity (1,1),
+aeg DATETIME,
+toiming  varchar(100),
+andmed text);
+
+--INSERT TRIGER - jälgib andmete sisestamine tabelis linnad
+-- ja teeb vastava kirje tabelis logi
+Create TRIGGER linnaLisamine
+ON linnad --tabelinimi, mis on vaja jälgida
+FOR INSERT
+AS
+INSERT INTO logi(aeg, toiming, andmed)
+SELECT
+GETDATE(),
+'on tehtud INSERT käsk',
+inserted.linnanimi
+FROM inserted;
+
+--trigeri tegevuse kontroll
+INSERT INTO linnad(linnanimi, rahvaarv)
+VALUES('Tapa', 5000);
+SELECT * FROM linnad;
+SELECT * FROM logi;
+
+
+
+--------------------------------------------------------------------------
+
+
+
+USE [trigerTARgv24]
+GO
+/****** Object:  Trigger [dbo].[linnaLisamine]    Script Date: 19.03.2025 09:04:01 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER TRIGGER [dbo].[linnaLisamine]
+ON [dbo].[linnad] --tabelinimi, mis on vaja jälgida
+FOR INSERT
+AS
+INSERT INTO logi(kasutaja, aeg, toiming, andmed)
+SELECT
+SUSER_NAME(), --USER
+GETDATE(),
+'on tehtud INSERT käsk',
+CONCAT (inserted.linnanimi, ', elanike arv:', inserted.rahvaarv)
+FROM inserted;
+
+
+
+--------------------------------------------------------------------------
+
+
+
+CREATE TRIGGER linnaKustutamine
+ON linnad --tabelinimi, mis on vaja jälgida
+FOR DELETE
+AS
+INSERT INTO logi(kasutaja, aeg, toiming, andmed)
+SELECT
+SUSER_NAME(), --USER
+GETDATE(),
+'on tehtud DELETE käsk',
+CONCAT ('linn: ', deleted.linnanimi,
+', elanike arv:', deleted.rahvaarv)
+FROM deleted;
+
+--kontroll
+DELETE FROM linnad
+WHERE linnID=2;
+select * from linnad;
+select * from logi;
+
+
+
+--------------------------------------------------------------------------
+
+
+
+CREATE TRIGGER linnaUuendamine
+ON linnad --tabelinimi, mis on vaja jälgida
+FOR UPDATE
+AS
+INSERT INTO logi(kasutaja, aeg, toiming, andmed)
+SELECT
+SUSER_NAME(), --USER
+GETDATE(),
+'on tehtud UPDATE käsk',
+CONCAT ('vanad andmed -linn: ', deleted.linnanimi,
+', elanike arv:', deleted.rahvaarv,
+'\n uued andmed -linn: ', inserted.linnanimi,
+', elanike arv:', inserted.rahvaarv)
+FROM deleted
+inner join inserted
+ON deleted.linnID=inserted.linnID;
+
+--kontroll
+update linnad set rahvaarv=2500
+where linnID=3;
+select * from linnad;
+select * from logi;
