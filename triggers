@@ -110,3 +110,40 @@ update linnad set rahvaarv=2500
 where linnID=3;
 select * from linnad;
 select * from logi;
+
+
+
+
+
+
+--------------------------------------------------------------------------
+
+XAMPP linnaLisamine (linnad, AFTER, INSERT)
+
+INSERT INTO logi(kasutaja, aeg, toiming, andmed)
+values(
+USER(),
+NOW(),
+'on tehtud INSERT käsk',
+CONCAT ('linn: ', NEW.linnanimi, ', elanike arv:', NEW.rahvaarv)
+)
+
+
+
+
+
+XAMPP linnaUuendamine (linnad, BEFORE, UPDATE)
+
+INSERT INTO logi(kasutaja, aeg, toiming, andmed)
+SELECT
+USER(),
+NOW(),
+'on tehtud UPDATE käsk',
+CONCAT ('vanad andmed -linn: ', OLD.linnanimi,
+', elanike arv:', OLD.rahvaarv,
+'\n uued andmed -linn: ', NEW.linnanimi,
+', elanike arv:', NEW.rahvaarv)
+FROM linnad l
+inner join linnad li
+ON l.linnID=li.linnID
+WHERE NEW.linnID=l.linnID
