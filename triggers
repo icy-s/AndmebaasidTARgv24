@@ -147,3 +147,16 @@ FROM linnad l
 inner join linnad li
 ON l.linnID=li.linnID
 WHERE NEW.linnID=l.linnID
+
+
+
+
+
+XAMPP linnaKustutamine (linnad, BEFORE, DELETE)
+
+INSERT INTO logi(kasutaja, aeg, toiming, andmed)
+values(
+USER(),
+NOW(),
+'linn on kustutatud',
+OLD.linnanimi)
