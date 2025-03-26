@@ -115,3 +115,16 @@ select * from logi;
 select * from maakond;
 update maakond set pindala=1000
 where maakondID=1
+
+
+
+--------------------------------------------------------------
+
+
+
+XAMPP maakond tabeli loomine
+
+CREATE TABLE maakond(
+    maakondID int AUTO_INCREMENT PRIMARY KEY,
+    maakond varchar(100) UNIQUE,
+	pindala int);
