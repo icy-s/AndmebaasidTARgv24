@@ -1,0 +1,117 @@
+create database triger2tabelid;
+use triger2tabelid;
+
+Create table linnad(
+linnID int identity(1,1) PRIMARY KEY,
+linnanimi varchar(15),
+rahvaarv int);
+
+Create table logi(
+id int identity(1,1) PRIMARY KEY,
+aeg DATETIME,
+toiming  varchar(100),
+andmed TEXT);
+
+CREATE TABLE maakond(
+    maakondID int Primary KEY identity(1,1),
+    maakond varchar(100) UNIQUE,
+	pindala int);
+    
+INSERT INTO maakond(maakond)
+VALUES ('Harjumaa');
+INSERT INTO maakond(maakond)
+VALUES ('Pärnumaa');
+
+SELECT * FROM maakond
+
+ALTER TABLE linnad ADD maakondID int;
+ALTER TABLE linnad ADD CONSTRAINT fk_maakond
+FOREIGN KEY (maakondID) References maakond(maakondID)
+
+select * from linnad
+select * from maakond
+insert into linnad(linnanimi, rahvaarv, maakondID)
+values('Tallinn', 600000, 1)
+
+--disable
+create trigger linnaLisamine
+ON linnad
+FOR INSERT
+AS
+INSERT INTO logi(aeg, toiming, andmed)
+SELECT GETDATE(),
+'on tehtud INSERT',
+CONCAT(m.maakond, ' linn ', inserted.linnanimi, ', ', inserted.rahvaarv)
+FROM inserted
+inner join maakond m ON m.maakondID=inserted.maakondID;
+
+--trigeri kustutamine
+drop trigger linnaLisamine
+
+--puhasta logi tabeli
+delete from logi;
+
+--kontroll
+insert into linnad(linnanimi, rahvaarv, maakondID)
+values('Maardu', 50000, 1)
+select * from logi
+select * from linnad
+
+
+
+--------------------------------------------------------------
+
+
+
+ALTER TABLE logi ADD kasutaja varchar(25);
+
+create trigger linnaKustutamine
+ON linnad
+FOR DELETE
+AS
+INSERT INTO logi(aeg, toiming, andmed, kasutaja)
+SELECT
+GETDATE(),
+'on tehtud DELETE',
+CONCAT(m.maakond, ' linn ', deleted.linnanimi, ', ', deleted.rahvaarv),
+SUSER_NAME()
+FROM deleted
+inner join maakond m ON m.maakondID=deleted.maakondID;
+
+delete from linnad
+where linnID=7;
+SELECT * from linnad
+SELECT * from logi
+
+
+
+--------------------------------------------------------------
+
+
+
+create trigger linnaUuendamine
+ON linnad
+FOR UPDATE
+AS
+INSERT INTO logi(aeg, toiming, andmed, kasutaja)
+SELECT
+GETDATE(),
+'on tehtud UPDATE',
+CONCAT('vanad andmed - ', m1.maakond, ', pindala: ', m1.pindala, ', linn ', deleted.linnanimi, ', ', deleted.rahvaarv,
+' | uued andmed - ', m2.maakond, ', pindala: ', m2.pindala, ', linn ', inserted.linnanimi, ', ', inserted.rahvaarv),
+SUSER_NAME()
+FROM deleted
+inner join inserted on deleted.linnID=inserted.linnID
+inner join maakond m1 ON m1.maakondID=deleted.maakondID
+inner join maakond m2 ON m2.maakondID=inserted.maakondID;
+
+drop trigger linnaUuendamine
+
+--kontroll
+update linnad set maakondID=2
+where linnID=8;
+select * from linnad;
+select * from logi;
+select * from maakond;
+update maakond set pindala=1000
+where maakondID=1
